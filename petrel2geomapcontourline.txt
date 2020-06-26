@@ -1,0 +1,60 @@
+Sub petrel2geomap()
+'convert contour line cps line exported by petrel to geomap
+
+'---------------------------------------
+'批量打开文件
+Dim tmpFileName As String, FileNumber As Integer, c As Range
+Dim myWorkbook As Workbook, tmpFileList, tmpFileIndex As Long
+Dim f As Integer
+
+tmpFileList = Application.GetOpenFilename("Data File(*.*),*.*", , "确定文件", , True)
+For f = 1 To UBound(tmpFileList)
+Workbooks.OpenText (tmpFileList(f)), DataType:=xlDelimited, TextQualifier:=xlDoubleQuote, _
+        ConsecutiveDelimiter:=True, Tab:=True, Semicolon:=False, Comma:=False, _
+        Space:=True, Other:=False, FieldInfo:=Array(Array(1, 1), Array(2, 1), Array(3 _
+        , 1)), TrailingMinusNumbers:=True
+
+
+'-----------------------------------------
+Dim DS As Worksheet
+Set DS = Application.ActiveWorkbook.ActiveSheet
+'原始数据都在第一列，对数据用空格分列
+ DS.Columns("A:A").Select
+    Selection.TextToColumns Destination:=Range("A1"), DataType:=xlDelimited, _
+        TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=True, Tab:=True, _
+        Semicolon:=False, Comma:=False, Space:=True, Other:=False, FieldInfo _
+        :=Array(Array(1, 1), Array(2, 1), Array(3, 1)), TrailingMinusNumbers:=True
+
+'------------------
+
+
+Dim nline, ncolumn As Long
+Dim i As Integer
+Dim m, n As Integer
+
+nline = ActiveSheet.UsedRange.Rows.Count
+ncolumn = ActiveSheet.UsedRange.Columns.Count
+
+Rows(1).Clear
+
+Cells(1, 1) = "GmLine v3.0(Contour) "
+
+For i = 3 To nline
+    If Cells(i, 2) = "" Then
+        Cells(i, 2) = Cells(i + 1, 3)
+        m = i
+        n = 0
+    Else 
+        n = n + 1
+        Cells(m, 1) = n
+    End If    
+Next
+
+Rows(2).Delete
+'-----------------------------------
+
+ActiveWorkbook.Save               '保存处理后的数据
+ActiveWorkbook.Close False        '直接关闭，不提示保存
+
+Next f
+End Sub

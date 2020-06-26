@@ -1,0 +1,66 @@
+Sub geomapcounterline2petrel()
+'convert geomap contour line to petrel cps3 line
+'used method:
+'(1) insert a module in excel vba 
+'(2) copy the code to it
+'(3) run  
+'(4) select the files to convert
+
+'---------------------------------------
+'批量打开文件
+Dim tmpFileName As String, FileNumber As Integer, c As Range
+Dim myWorkbook As Workbook, tmpFileList, tmpFileIndex As Long
+Dim f As Integer
+
+tmpFileList = Application.GetOpenFilename("Data File(*.*),*.*", , "确定文件", , True)
+For f = 1 To UBound(tmpFileList)
+Workbooks.OpenText (tmpFileList(f)), DataType:=xlDelimited, TextQualifier:=xlDoubleQuote, _
+        ConsecutiveDelimiter:=True, Tab:=True, Semicolon:=False, Comma:=False, _
+        Space:=True, Other:=False, FieldInfo:=Array(Array(1, 1), Array(2, 1), Array(3 _
+        , 1)), TrailingMinusNumbers:=True
+
+Dim DS As Worksheet
+Set DS = Application.ActiveWorkbook.ActiveSheet
+'原始数据都在第一列，对数据用空格分列
+ DS.Columns("A:A").Select
+    Selection.TextToColumns Destination:=Range("A1"), DataType:=xlDelimited, _
+        TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=True, Tab:=True, _
+        Semicolon:=False, Comma:=False, Space:=True, Other:=False, FieldInfo _
+        :=Array(Array(1, 1), Array(2, 1), Array(3, 1)), TrailingMinusNumbers:=True
+
+'------------------
+
+Dim nline, ncolumn As Long
+Dim i As long
+
+
+nline = ActiveSheet.UsedRange.Rows.Count
+ncolumn = ActiveSheet.UsedRange.Columns.Count
+Dim value As Long
+Dim lineNum As Integer
+value = 0
+lineNum = 1
+
+For i = 2 To nline
+    If DS.Cells(i, 3) = "" Then
+        value = DS.Cells(i, 2)
+        DS.Cells(i, 1) = "->" & lineNum
+        DS.Cells(i, 2) = ""
+	lineNum  = lineNum + 1
+    Else
+        DS.Cells(i, 3) = value
+    End If
+Next
+
+Rows(1).Insert
+Rows(2).Clear
+Cells(1, 1) = "FFASCI 0 1 " & "LINES" & " 0 1e+10 "
+Cells(2, 1) = "FFATTR 0 1"
+'---------------------------------------
+ActiveWorkbook.Save               '保存处理后的数据
+ActiveWorkbook.Close False        '直接关闭，不提示保存
+
+Next f
+
+
+End Sub
