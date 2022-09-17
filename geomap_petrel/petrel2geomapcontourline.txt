@@ -2,12 +2,12 @@ Sub petrel2geomap()
 'convert contour line cps line exported by petrel to geomap
 
 '---------------------------------------
-'批量打开文件
+'鎵归噺鎵撳紑鏂囦欢
 Dim tmpFileName As String, FileNumber As Integer, c As Range
 Dim myWorkbook As Workbook, tmpFileList, tmpFileIndex As Long
 Dim f As Integer
 
-tmpFileList = Application.GetOpenFilename("Data File(*.*),*.*", , "确定文件", , True)
+tmpFileList = Application.GetOpenFilename("Data File(*.*),*.*", , "纭畾鏂囦欢", , True)
 For f = 1 To UBound(tmpFileList)
 Workbooks.OpenText (tmpFileList(f)), DataType:=xlDelimited, TextQualifier:=xlDoubleQuote, _
         ConsecutiveDelimiter:=True, Tab:=True, Semicolon:=False, Comma:=False, _
@@ -18,7 +18,7 @@ Workbooks.OpenText (tmpFileList(f)), DataType:=xlDelimited, TextQualifier:=xlDou
 '-----------------------------------------
 Dim DS As Worksheet
 Set DS = Application.ActiveWorkbook.ActiveSheet
-'原始数据都在第一列，对数据用空格分列
+'鍘熷鏁版嵁閮藉湪绗竴鍒楋紝瀵规暟鎹敤绌烘牸鍒嗗垪
  DS.Columns("A:A").Select
     Selection.TextToColumns Destination:=Range("A1"), DataType:=xlDelimited, _
         TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=True, Tab:=True, _
@@ -53,8 +53,8 @@ Next
 Rows(2).Delete
 '-----------------------------------
 
-ActiveWorkbook.Save               '保存处理后的数据
-ActiveWorkbook.Close False        '直接关闭，不提示保存
+ActiveWorkbook.Save               '淇濆瓨澶勭悊鍚庣殑鏁版嵁
+ActiveWorkbook.Close False        '鐩存帴鍏抽棴锛屼笉鎻愮ず淇濆瓨
 
 Next f
 End Sub
