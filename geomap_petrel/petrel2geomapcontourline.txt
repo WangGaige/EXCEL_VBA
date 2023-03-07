@@ -1,3 +1,5 @@
+'---------------------------------------
+'注意！petrel输出等值线时，应该对点进行抽稀，否则超过7w行运行会报错。
 Sub petrel2geomap()
 'convert contour line cps line exported by petrel to geomap
 
